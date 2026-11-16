@@ -1,0 +1,539 @@
+{
+  "entities": {
+    "Employee": {
+      "title": "Employee",
+      "description": "Pharmacy employee profile with default shift schedule and work/rest days",
+      "type": "object",
+      "properties": {
+        "employeeCode": {
+          "type": "string",
+          "pattern": "^EMP-[0-9]{3,6}$",
+          "maxLength": 20,
+          "description": "Auto-generated employee code"
+        },
+        "name": {
+          "type": "string",
+          "minLength": 2,
+          "maxLength": 100,
+          "description": "Employee full name"
+        },
+        "department": {
+          "type": "string",
+          "minLength": 2,
+          "maxLength": 60,
+          "description": "Department or job title"
+        },
+        "defaultScheduleId": {
+          "type": "string",
+          "pattern": "^[a-zA-Z0-9_\\-]+$",
+          "maxLength": 64,
+          "description": "Default WorkSchedule document ID"
+        },
+        "defaultCheckIn": {
+          "type": "string",
+          "pattern": "^([01][0-9]|2[0-3]):[0-5][0-9]$",
+          "maxLength": 5,
+          "description": "Default scheduled check-in time HH:mm"
+        },
+        "defaultCheckOut": {
+          "type": "string",
+          "pattern": "^([01][0-9]|2[0-3]):[0-5][0-9]$",
+          "maxLength": 5,
+          "description": "Default scheduled check-out time HH:mm"
+        },
+        "workDays": {
+          "type": "array",
+          "description": "Weekly work day indices (0=Sunday..6=Saturday)"
+        },
+        "restDays": {
+          "type": "array",
+          "description": "Weekly rest day indices (0=Sunday..6=Saturday)"
+        },
+        "hourlyRate": {
+          "type": "number",
+          "description": "Optional hourly rate for future payroll calculations"
+        },
+        "startDate": {
+          "type": "string",
+          "pattern": "^[0-9]{4}-[0-9]{2}-[0-9]{2}$",
+          "maxLength": 10,
+          "description": "Employment start date YYYY-MM-DD"
+        },
+        "status": {
+          "type": "string",
+          "enum": ["active", "inactive"],
+          "maxLength": 20,
+          "description": "Active or inactive status"
+        },
+        "ownerUid": {
+          "type": "string",
+          "maxLength": 128
+        },
+        "allowedEmails": {
+          "type": "array"
+        },
+        "createdAt": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "updatedAt": {
+          "type": "string",
+          "format": "date-time"
+        }
+      },
+      "required": [
+        "employeeCode",
+        "name",
+        "department",
+        "defaultScheduleId",
+        "defaultCheckIn",
+        "defaultCheckOut",
+        "workDays",
+        "restDays",
+        "startDate",
+        "status",
+        "ownerUid",
+        "allowedEmails",
+        "createdAt",
+        "updatedAt"
+      ]
+    },
+    "WorkSchedule": {
+      "title": "WorkSchedule",
+      "description": "Reusable pharmacy shift schedule supporting overnight shifts",
+      "type": "object",
+      "properties": {
+        "name": {
+          "type": "string",
+          "minLength": 2,
+          "maxLength": 80
+        },
+        "checkInTime": {
+          "type": "string",
+          "pattern": "^([01][0-9]|2[0-3]):[0-5][0-9]$",
+          "maxLength": 5
+        },
+        "checkOutTime": {
+          "type": "string",
+          "pattern": "^([01][0-9]|2[0-3]):[0-5][0-9]$",
+          "maxLength": 5
+        },
+        "crossesMidnight": {
+          "type": "boolean"
+        },
+        "durationMinutes": {
+          "type": "integer"
+        },
+        "description": {
+          "type": "string",
+          "maxLength": 200
+        },
+        "isActive": {
+          "type": "boolean"
+        },
+        "ownerUid": {
+          "type": "string",
+          "maxLength": 128
+        },
+        "allowedEmails": {
+          "type": "array"
+        },
+        "createdAt": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "updatedAt": {
+          "type": "string",
+          "format": "date-time"
+        }
+      },
+      "required": [
+        "name",
+        "checkInTime",
+        "checkOutTime",
+        "crossesMidnight",
+        "durationMinutes",
+        "description",
+        "isActive",
+        "ownerUid",
+        "allowedEmails",
+        "createdAt",
+        "updatedAt"
+      ]
+    },
+    "AttendanceRecord": {
+      "title": "AttendanceRecord",
+      "description": "Daily attendance record with historical snapshot of scheduled shift times and calculated minute metrics",
+      "type": "object",
+      "properties": {
+        "date": {
+          "type": "string",
+          "pattern": "^[0-9]{4}-[0-9]{2}-[0-9]{2}$",
+          "maxLength": 10
+        },
+        "employeeId": {
+          "type": "string",
+          "pattern": "^[a-zA-Z0-9_\\-]+$",
+          "maxLength": 64
+        },
+        "employeeCode": {
+          "type": "string",
+          "maxLength": 20
+        },
+        "employeeName": {
+          "type": "string",
+          "maxLength": 100
+        },
+        "department": {
+          "type": "string",
+          "maxLength": 60
+        },
+        "scheduleId": {
+          "type": "string",
+          "pattern": "^[a-zA-Z0-9_\\-]+$",
+          "maxLength": 64
+        },
+        "scheduleName": {
+          "type": "string",
+          "maxLength": 80
+        },
+        "scheduledCheckIn": {
+          "type": "string",
+          "pattern": "^([01][0-9]|2[0-3]):[0-5][0-9]$",
+          "maxLength": 5
+        },
+        "scheduledCheckOut": {
+          "type": "string",
+          "pattern": "^([01][0-9]|2[0-3]):[0-5][0-9]$",
+          "maxLength": 5
+        },
+        "crossesMidnight": {
+          "type": "boolean"
+        },
+        "actualCheckIn": {
+          "type": "string",
+          "maxLength": 5
+        },
+        "actualCheckOut": {
+          "type": "string",
+          "maxLength": 5
+        },
+        "status": {
+          "type": "string",
+          "enum": ["present", "absent", "leave", "rest"],
+          "maxLength": 20
+        },
+        "lateMinutes": {
+          "type": "integer"
+        },
+        "earlyArrivalMinutes": {
+          "type": "integer"
+        },
+        "earlyLeaveMinutes": {
+          "type": "integer"
+        },
+        "overtimeMinutes": {
+          "type": "integer"
+        },
+        "actualWorkedMinutes": {
+          "type": "integer"
+        },
+        "netTimeDiffMinutes": {
+          "type": "integer"
+        },
+        "notes": {
+          "type": "string",
+          "maxLength": 300
+        },
+        "updatedByName": {
+          "type": "string",
+          "maxLength": 100
+        },
+        "updatedByEmail": {
+          "type": "string",
+          "maxLength": 120
+        },
+        "ownerUid": {
+          "type": "string",
+          "maxLength": 128
+        },
+        "allowedEmails": {
+          "type": "array"
+        },
+        "createdAt": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "updatedAt": {
+          "type": "string",
+          "format": "date-time"
+        }
+      },
+      "required": [
+        "date",
+        "employeeId",
+        "employeeCode",
+        "employeeName",
+        "department",
+        "scheduleId",
+        "scheduleName",
+        "scheduledCheckIn",
+        "scheduledCheckOut",
+        "crossesMidnight",
+        "actualCheckIn",
+        "actualCheckOut",
+        "status",
+        "lateMinutes",
+        "earlyArrivalMinutes",
+        "earlyLeaveMinutes",
+        "overtimeMinutes",
+        "actualWorkedMinutes",
+        "netTimeDiffMinutes",
+        "notes",
+        "updatedByName",
+        "updatedByEmail",
+        "ownerUid",
+        "allowedEmails",
+        "createdAt",
+        "updatedAt"
+      ]
+    },
+    "Holiday": {
+      "title": "Holiday",
+      "description": "Official holidays, leaves, and special rest days",
+      "type": "object",
+      "properties": {
+        "date": {
+          "type": "string",
+          "pattern": "^[0-9]{4}-[0-9]{2}-[0-9]{2}$",
+          "maxLength": 10
+        },
+        "name": {
+          "type": "string",
+          "minLength": 2,
+          "maxLength": 100
+        },
+        "type": {
+          "type": "string",
+          "enum": ["official_holiday", "weekly_rest", "special_leave"],
+          "maxLength": 30
+        },
+        "appliesToAll": {
+          "type": "boolean"
+        },
+        "employeeId": {
+          "type": "string",
+          "maxLength": 64
+        },
+        "notes": {
+          "type": "string",
+          "maxLength": 300
+        },
+        "ownerUid": {
+          "type": "string",
+          "maxLength": 128
+        },
+        "allowedEmails": {
+          "type": "array"
+        },
+        "createdAt": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "updatedAt": {
+          "type": "string",
+          "format": "date-time"
+        }
+      },
+      "required": [
+        "date",
+        "name",
+        "type",
+        "appliesToAll",
+        "employeeId",
+        "notes",
+        "ownerUid",
+        "allowedEmails",
+        "createdAt",
+        "updatedAt"
+      ]
+    },
+    "UserAccount": {
+      "title": "UserAccount",
+      "description": "Authenticated system user and RBAC role",
+      "type": "object",
+      "properties": {
+        "uid": {
+          "type": "string",
+          "maxLength": 128
+        },
+        "email": {
+          "type": "string",
+          "maxLength": 120
+        },
+        "displayName": {
+          "type": "string",
+          "maxLength": 100
+        },
+        "role": {
+          "type": "string",
+          "enum": ["admin", "supervisor", "viewer"],
+          "maxLength": 20
+        },
+        "active": {
+          "type": "boolean"
+        },
+        "createdAt": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "updatedAt": {
+          "type": "string",
+          "format": "date-time"
+        }
+      },
+      "required": ["uid", "email", "displayName", "role", "active", "createdAt", "updatedAt"]
+    },
+    "AuditLog": {
+      "title": "AuditLog",
+      "description": "Immutable modification history entry with editor identity",
+      "type": "object",
+      "properties": {
+        "action": {
+          "type": "string",
+          "enum": ["create", "update", "delete", "status_change", "restore"],
+          "maxLength": 30
+        },
+        "entityType": {
+          "type": "string",
+          "enum": ["employee", "schedule", "attendance", "holiday", "user", "settings", "backup"],
+          "maxLength": 30
+        },
+        "entityId": {
+          "type": "string",
+          "maxLength": 128
+        },
+        "summary": {
+          "type": "string",
+          "maxLength": 300
+        },
+        "performedByUid": {
+          "type": "string",
+          "maxLength": 128
+        },
+        "performedByName": {
+          "type": "string",
+          "maxLength": 100
+        },
+        "performedByEmail": {
+          "type": "string",
+          "maxLength": 120
+        },
+        "ownerUid": {
+          "type": "string",
+          "maxLength": 128
+        },
+        "allowedEmails": {
+          "type": "array"
+        },
+        "createdAt": {
+          "type": "string",
+          "format": "date-time"
+        }
+      },
+      "required": [
+        "action",
+        "entityType",
+        "entityId",
+        "summary",
+        "performedByUid",
+        "performedByName",
+        "performedByEmail",
+        "ownerUid",
+        "allowedEmails",
+        "createdAt"
+      ]
+    },
+    "SystemSettings": {
+      "title": "SystemSettings",
+      "description": "Pharmacy configuration and authorized user email list",
+      "type": "object",
+      "properties": {
+        "pharmacyName": {
+          "type": "string",
+          "minLength": 2,
+          "maxLength": 100
+        },
+        "branchName": {
+          "type": "string",
+          "maxLength": 100
+        },
+        "departments": {
+          "type": "array"
+        },
+        "authorizedEmails": {
+          "type": "array"
+        },
+        "nextEmployeeSeq": {
+          "type": "integer"
+        },
+        "ownerUid": {
+          "type": "string",
+          "maxLength": 128
+        },
+        "allowedEmails": {
+          "type": "array"
+        },
+        "createdAt": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "updatedAt": {
+          "type": "string",
+          "format": "date-time"
+        }
+      },
+      "required": [
+        "pharmacyName",
+        "branchName",
+        "departments",
+        "authorizedEmails",
+        "nextEmployeeSeq",
+        "ownerUid",
+        "allowedEmails",
+        "createdAt",
+        "updatedAt"
+      ]
+    }
+  },
+  "firestore": {
+    "/employees/{employeeId}": {
+      "schema": { "$ref": "#/entities/Employee" },
+      "description": "Pharmacy employees collection"
+    },
+    "/work_schedules/{scheduleId}": {
+      "schema": { "$ref": "#/entities/WorkSchedule" },
+      "description": "Shift templates and work schedules collection"
+    },
+    "/attendance_records/{recordId}": {
+      "schema": { "$ref": "#/entities/AttendanceRecord" },
+      "description": "Daily attendance records keyed by date_employeeId_scheduleId"
+    },
+    "/holidays/{holidayId}": {
+      "schema": { "$ref": "#/entities/Holiday" },
+      "description": "Official holidays and scheduled rest/leave entries"
+    },
+    "/users/{userId}": {
+      "schema": { "$ref": "#/entities/UserAccount" },
+      "description": "System user accounts and role assignments"
+    },
+    "/audit_logs/{logId}": {
+      "schema": { "$ref": "#/entities/AuditLog" },
+      "description": "Immutable audit trail for all system mutations"
+    },
+    "/system_settings/{settingId}": {
+      "schema": { "$ref": "#/entities/SystemSettings" },
+      "description": "Pharmacy system configuration document"
+    }
+  }
+}

@@ -1,6 +1,0 @@
-{
-  "name": "نظام حضور وانصراف الصيدلية",
-  "description": "نظام متكامل باللغة العربية لإدارة حضور وانصراف موظفي الصيدلية، ومتابعة التأخير والانصراف المبكر والساعات الإضافية وصافي الوقت.",
-  "requestFramePermissions": [],
-  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
-}
